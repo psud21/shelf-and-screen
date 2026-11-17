@@ -4,11 +4,12 @@ import { useHub } from "./hub-context";
 import "./connection-dialog.css";
 
 const sections = [
-  { id: "all", label: "Overview", hash: "overview" },
+  { id: "home", label: "Home", hash: "home" },
   { id: "book", label: "Books", hash: "books" },
   { id: "movie", label: "Movies", hash: "movies" },
   { id: "tv", label: "TV", hash: "tv" },
   { id: "queue", label: "Queue", hash: "queue" },
+  { id: "all", label: "All titles", hash: "overview" },
 ];
 const storageNames = { github: "GitHub", browser: "This browser", none: "Connect library" };
 const storageIcons = { github: Cloud, browser: HardDrive, none: Link2 };
@@ -32,7 +33,7 @@ export default function MediaNavigation({
   return (
     <header className="bs-header">
       <div className="bs-header-inner">
-        <a className="bs-brand" href="#overview" onClick={go("all")}>
+        <a className="bs-brand" href="#home" onClick={go("home")}>
           <span className="brand-emblem" aria-hidden="true">
             <LibraryBig size={16} strokeWidth={1.5} />
           </span>

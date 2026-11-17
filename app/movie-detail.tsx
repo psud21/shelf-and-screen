@@ -128,25 +128,27 @@ export default function MovieDetail(props: Props) {
           <button className="film-all-details" disabled={locked} onClick={props.onEdit}>
             Edit all details
           </button>
-          <div>
-            <button
-              className="film-step"
-              aria-label={isTV ? "Previous show" : "Previous movie"}
-              disabled={!props.onPrevious || locked}
-              onClick={props.onPrevious}
-            >
-              <ChevronLeft size={17} />
-            </button>
-            <span>{isTV ? "Show" : "Film"}</span>
-            <button
-              className="film-step"
-              aria-label={isTV ? "Next show" : "Next movie"}
-              disabled={!props.onNext || locked}
-              onClick={props.onNext}
-            >
-              <ChevronRight size={17} />
-            </button>
-          </div>
+          {(props.onPrevious || props.onNext) && (
+            <div>
+              <button
+                className="film-step"
+                aria-label={isTV ? "Previous show" : "Previous movie"}
+                disabled={!props.onPrevious || locked}
+                onClick={props.onPrevious}
+              >
+                <ChevronLeft size={17} />
+              </button>
+              <span>{isTV ? "Show" : "Film"}</span>
+              <button
+                className="film-step"
+                aria-label={isTV ? "Next show" : "Next movie"}
+                disabled={!props.onNext || locked}
+                onClick={props.onNext}
+              >
+                <ChevronRight size={17} />
+              </button>
+            </div>
+          )}
         </footer>
       </div>
     </StoryDialog>

@@ -8,6 +8,9 @@ repository or in your browser.
 
 ## What it does
 
+- A home screen: what you're reading and watching now, the year in numbers,
+  the front of your queue, releases you're waiting for, recent finishes and
+  your highest-rated titles.
 - Bookshelves with spines sized by page count, plus movie and TV poster galleries.
 - One overall score per show, optional season history, and an episode tracker.
 - A queue of recommendations, with who recommended each title and why.

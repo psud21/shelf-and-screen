@@ -22,6 +22,7 @@ import Modal from "./modal";
 import MovieGallery from "./movie-gallery";
 import Overview from "./overview";
 import Queue from "./queue";
+import Home from "./home";
 import TVGallery from "./tv-gallery";
 import "./collection.css";
 
@@ -30,6 +31,7 @@ type Editing = { item: Media; session: number; identifier: boolean; recommendati
 
 const STARTED_KEY = "shelf-screen-started";
 const sectionForHash: Record<string, string> = {
+  "#home": "home",
   "#overview": "all",
   "#books": "book",
   "#movies": "movie",
@@ -37,6 +39,7 @@ const sectionForHash: Record<string, string> = {
   "#queue": "queue",
 };
 const hashForSection: Record<string, string> = {
+  home: "home",
   all: "overview",
   book: "books",
   movie: "movies",
@@ -57,7 +60,7 @@ export default function Hub() {
     [loading, setLoading] = useState(!!connection),
     [loadError, setLoadError] = useState("");
   const [view, setView] = useState<View>("all"),
-    [kind, setKind] = useState("all"),
+    [kind, setKind] = useState("home"),
     [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Editing | null>(null),
     [busy, setBusy] = useState(false),
@@ -117,7 +120,7 @@ export default function Hub() {
 
   useEffect(() => {
     const readSection = () => {
-      setKind(sectionForHash[window.location.hash] || "all");
+      setKind(sectionForHash[window.location.hash] || "home");
       setView("all");
       setQuery("");
     };
@@ -134,7 +137,7 @@ export default function Hub() {
     setKind(next);
     setView("all");
     setQuery("");
-    const hash = `#${hashForSection[next] || "overview"}`;
+    const hash = `#${hashForSection[next] || "home"}`;
     if (window.location.hash !== hash) window.history.pushState(null, "", hash);
     window.scrollTo({ top: 0, behavior: "instant" });
   }
@@ -232,7 +235,7 @@ export default function Hub() {
   function startLibrary() {
     storage.setItem(STARTED_KEY, "1");
     setDemo(false);
-    navigateSection("all");
+    navigateSection("home");
     setToast("Your library is ready. Add a title or import a list.");
   }
 
@@ -279,7 +282,16 @@ export default function Hub() {
   return (
     <HubContext.Provider value={hub}>
       <div className="app-shell bookshelf-mode">
-        {kind === "queue" ? (
+        {kind === "home" ? (
+          <Home
+            {...shared}
+            items={items}
+            onEdit={openEditor}
+            onSave={persistItem}
+            onImport={openImport}
+            onSample={() => setDemo(true)}
+          />
+        ) : kind === "queue" ? (
           <Queue
             {...shared}
             items={items}

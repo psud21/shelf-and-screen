@@ -115,7 +115,7 @@ export default function Overview(props: Props) {
         <div className="ov-heading">
           <div>
             <span className="collection-eyebrow">YOUR PERSONAL CATALOG</span>
-            <h1>Overview</h1>
+            <h1>All titles</h1>
             <p>
               {props.loading ? (
                 "Opening your collection…"
