@@ -22,6 +22,20 @@ type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 const CONNECTION_KEY = "shelf-screen-connection";
 const BROWSER_LIBRARY_KEY = "shelf-screen-library";
 const CACHE_KEY = "shelf-screen-cache";
+const TMDB_KEY = "shelf-screen-tmdb-key";
+
+/** The optional TMDB key for film and show artwork, kept only in this browser. */
+export function readTmdbKey(storage: KeyValue): string {
+  try {
+    return storage.getItem(TMDB_KEY)?.trim() ?? "";
+  } catch {
+    return "";
+  }
+}
+export function writeTmdbKey(storage: KeyValue, key: string) {
+  if (key.trim()) storage.setItem(TMDB_KEY, key.trim());
+  else storage.removeItem(TMDB_KEY);
+}
 
 /** The browser's own storage, or a stand-in that lasts for this visit when it is blocked. */
 export function deviceStorage(): KeyValue {

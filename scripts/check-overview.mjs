@@ -70,3 +70,24 @@ assert.deepEqual(
 console.log(
   "PASS: overview filters compose, search includes notes/year, zero remains a valid rating, missing dates/scores sort last, and source records remain unchanged.",
 );
+
+// A show with its own entry stands for its seasons; a season on its own keeps its row.
+const withSeasons = [
+  { ...show, id: "andor", title: "Andor", status: "finished" },
+  { ...show, id: "andor-1", title: "Andor - Season 1", status: "finished" },
+  { ...show, id: "andor-2", title: "Andor - Season 2", status: "finished" },
+  { ...show, id: "td-1", title: "True Detective - Season 1", status: "finished" },
+];
+assert.deepEqual(
+  overviewRows(withSeasons, options).map((i) => i.id),
+  ["andor", "td-1"],
+);
+// Sorting by finish date uses the rating date when there is no finish date.
+const rated = { ...film, id: "rated", title: "Rated", completedAt: "", ratedAt: "2026-11-01" };
+assert.deepEqual(
+  overviewRows([film, rated, book], { ...options, sort: "completedAt", ascending: false }).map(
+    (i) => i.id,
+  ),
+  ["rated", "film", "book"],
+);
+console.log("PASS: shows fold their seasons, and finish dates fall back to rating dates.");

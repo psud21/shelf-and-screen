@@ -1,15 +1,7 @@
 import type { Media } from "../lib/media";
 import { splitSeries } from "../lib/media";
+import { clothFor } from "../lib/cloth.mjs";
 import "./generated-cover.css";
-
-const cloths = 6;
-
-/** The same title always gets the same cloth colour. */
-export function clothFor(title: string): number {
-  let hash = 0;
-  for (const char of title) hash = (hash * 31 + char.codePointAt(0)!) >>> 0;
-  return (hash % cloths) + 1;
-}
 
 /**
  * A typeset cover for a title with no artwork: cloth colour, a gilt frame, the

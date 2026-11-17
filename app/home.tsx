@@ -5,7 +5,6 @@ import {
   CalendarDays,
   Clapperboard,
   Download,
-  LoaderCircle,
   Pencil,
   Plus,
   Tv,
@@ -32,6 +31,7 @@ import MediaThumbnail from "./media-thumbnail";
 import MovieDetail from "./movie-detail";
 import { ConnectButton, StorageLabel } from "./hub-context";
 import "./home.css";
+import { HomePlaceholder } from "./placeholders";
 
 type Props = {
   items: Media[];
@@ -168,10 +168,7 @@ export default function Home(props: Props) {
         )}
 
         {props.loading ? (
-          <div className="home-empty">
-            <LoaderCircle size={22} className="spin" />
-            <p>Opening your collection…</p>
-          </div>
+          <HomePlaceholder />
         ) : props.items.length === 0 ? (
           <div className="home-empty">
             <h2>Your shelves are waiting.</h2>

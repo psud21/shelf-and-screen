@@ -71,7 +71,14 @@ shows are found by their IMDb ID; books by ISBN, then by title and author, and a
 result for a different title is never used. The lookup sends the title, author,
 ISBN or IMDb ID to those services. Summaries carry a link to their source.
 
-To do the same for a whole library file at once:
+Film and show **artwork** (a wide backdrop for the detail panel, and a poster for
+titles without one) comes from TMDB, which needs your own free API key: add it
+under the storage button → _Film and show artwork_. The key is kept only in that
+browser and sent only to `api.themoviedb.org`. This product uses the TMDB API but
+is not endorsed or certified by TMDB.
+
+To do the same for a whole library file at once (set `TMDB_API_KEY` in the
+environment to include artwork):
 
 ```
 node scripts/backfill-library.mjs path/to/library.json [--goodreads goodreads_export.csv] [--write]

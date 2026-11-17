@@ -1,23 +1,14 @@
 import MediaNavigation from "./media-navigation";
 
 import { useMemo, useState } from "react";
-import {
-  ArrowUp,
-  Bookmark,
-  Clapperboard,
-  Download,
-  LoaderCircle,
-  Plus,
-  Search,
-  Upload,
-  X,
-} from "lucide-react";
+import { ArrowUp, Bookmark, Clapperboard, Download, Plus, Search, Upload, X } from "lucide-react";
 import { blankMedia, statusNames, type Media } from "../lib/media";
 import { movieRows, moviePosterFor } from "../lib/movie-gallery.mjs";
 import "./movie-gallery.css";
 import MovieDetail from "./movie-detail";
 import { ConnectButton, StorageLabel } from "./hub-context";
 import GeneratedCover from "./generated-cover";
+import { PosterPlaceholders } from "./placeholders";
 
 type Props = {
   items: Media[];
@@ -200,10 +191,7 @@ export default function MovieGallery(props: Props) {
         </div>
         <section className="mg-grid" aria-label="Movie poster gallery" aria-busy={props.loading}>
           {props.loading ? (
-            <div className="mg-empty">
-              <LoaderCircle size={24} className="spin" />
-              <p>Loading your movies…</p>
-            </div>
+            <PosterPlaceholders />
           ) : rows.length === 0 ? (
             <div className="mg-empty">
               <Clapperboard size={30} strokeWidth={1} />

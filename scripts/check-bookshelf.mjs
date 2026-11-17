@@ -25,9 +25,18 @@ assert.equal(readingFraction({ ...book, progress: "Page 100", pageCount: null })
 assert.equal(readingFraction({ ...book, progress: "Chapter 3" }), null);
 assert.equal(readingFraction({ ...book, progress: "130%" }), 1);
 assert.equal(readingFraction({ ...book, status: "planned" }), null);
-assert.notEqual(
+// Spine colour is a bookcloth chosen by title: steady across ratings, varied across titles.
+assert.equal(
   spineAppearance({ ...book, score: 0 }).color,
   spineAppearance({ ...book, score: null }).color,
+);
+assert.match(spineAppearance(book).color, /^var\(--cloth-[1-8]\)$/);
+assert.ok(
+  new Set(
+    ["Dune", "Emma", "Ulysses", "Beloved", "Middlemarch", "Persuasion"].map(
+      (title) => spineAppearance({ ...book, title }).color,
+    ),
+  ).size >= 3,
 );
 assert(
   spineAppearance({ ...book, pageCount: 900 }).height >

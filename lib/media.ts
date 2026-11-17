@@ -35,6 +35,8 @@ export const mediaSchema = z
     summary: z.string().max(5000).optional(),
     summarySource: z.string().max(100).optional(),
     summaryUrl: z.string().max(2000).optional(),
+    /** A wide still for films and shows, shown behind their details. */
+    backdropUrl: z.string().max(2000).optional(),
     /** Running time in minutes, for films. */
     runtime: z.number().int().positive().max(1500).optional(),
     status: z.enum(["planned", "progress", "finished", "paused", "dropped"]),
@@ -124,6 +126,11 @@ export function seriesLabel(item: Pick<Media, "series" | "seriesNumber" | "kind"
   if (!item.seriesNumber) return item.series;
   const unit = item.kind === "book" ? "Book" : "Part";
   return `${item.series}, ${/[-–]/.test(item.seriesNumber) ? `${unit}s` : unit} ${item.seriesNumber}`;
+}
+/** The day a title was finished, falling back to the day it was rated. */
+export function finishedOn(item: Pick<Media, "completedAt" | "ratedAt">): string {
+  const date = item.completedAt || item.ratedAt || "";
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "";
 }
 /** "2 h 12 min" */
 export function runtimeLabel(minutes?: number): string {

@@ -4,6 +4,8 @@ import type { Media } from "../lib/media";
 import {
   cleanGitHubSettings,
   createStore,
+  readTmdbKey,
+  writeTmdbKey,
   type Connection,
   type GitHubSettings,
 } from "../lib/storage";
@@ -31,6 +33,7 @@ export default function ConnectionDialog({ current, onClose, onConnected, onDisc
     token: "",
   });
   const [busy, setBusy] = useState(false);
+  const [tmdbKey, setTmdbKey] = useState(() => readTmdbKey(window.localStorage));
   const [error, setError] = useState("");
   const set = (patch: Partial<GitHubSettings>) => setForm({ ...form, ...patch });
 
@@ -47,6 +50,7 @@ export default function ConnectionDialog({ current, onClose, onConnected, onDisc
     try {
       // Opening the library is the test: it proves the details and the token work.
       const items = await createStore(connection, window.localStorage).load();
+      writeTmdbKey(window.localStorage, tmdbKey);
       onConnected(connection, items);
     } catch (cause) {
       setError((cause as Error).message || "The library could not be opened.");
@@ -175,6 +179,27 @@ export default function ConnectionDialog({ current, onClose, onConnected, onDisc
               </p>
             </div>
           )}
+          <details className="connection-artwork" open={!!tmdbKey || undefined}>
+            <summary>Film and show artwork (optional)</summary>
+            <p className="form-hint">
+              With a free TMDB API key, “Fill in missing details” also adds wide backdrops and
+              missing posters. The key is kept only in this browser.
+            </p>
+            <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noreferrer">
+              Get a TMDB API key <ArrowUpRight size={13} />
+            </a>
+            <label>
+              TMDB API key or read access token
+              <input
+                type="password"
+                autoComplete="off"
+                spellCheck={false}
+                value={tmdbKey}
+                placeholder="Not set"
+                onChange={(event) => setTmdbKey(event.target.value)}
+              />
+            </label>
+          </details>
           {error && (
             <div className="error-box" role="alert">
               {error}

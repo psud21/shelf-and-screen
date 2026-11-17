@@ -1,15 +1,26 @@
-import { Cloud, HardDrive, LibraryBig, Link2 } from "lucide-react";
+import {
+  BookOpen,
+  Clapperboard,
+  Cloud,
+  HardDrive,
+  House,
+  LibraryBig,
+  Link2,
+  ListOrdered,
+  Rows3,
+  Tv,
+} from "lucide-react";
 import type { MouseEvent } from "react";
 import { useHub } from "./hub-context";
 import "./connection-dialog.css";
 
 const sections = [
-  { id: "home", label: "Home", hash: "home" },
-  { id: "book", label: "Books", hash: "books" },
-  { id: "movie", label: "Movies", hash: "movies" },
-  { id: "tv", label: "TV", hash: "tv" },
-  { id: "queue", label: "Queue", hash: "queue" },
-  { id: "all", label: "All titles", hash: "overview" },
+  { id: "home", label: "Home", short: "Home", hash: "home", Icon: House },
+  { id: "book", label: "Books", short: "Books", hash: "books", Icon: BookOpen },
+  { id: "movie", label: "Movies", short: "Movies", hash: "movies", Icon: Clapperboard },
+  { id: "tv", label: "TV", short: "TV", hash: "tv", Icon: Tv },
+  { id: "queue", label: "Queue", short: "Queue", hash: "queue", Icon: ListOrdered },
+  { id: "all", label: "All titles", short: "All", hash: "overview", Icon: Rows3 },
 ];
 const storageNames = { github: "GitHub", browser: "This browser", none: "Connect library" };
 const storageIcons = { github: Cloud, browser: HardDrive, none: Link2 };
@@ -41,7 +52,7 @@ export default function MediaNavigation({
             Shelf <span>&</span> Screen
           </span>
         </a>
-        <nav aria-label="Media sections">
+        <nav className="bs-topnav" aria-label="Media sections">
           {sections.map((section) => (
             <a
               key={section.id}
@@ -64,6 +75,20 @@ export default function MediaNavigation({
           {storageNames[storage]}
         </button>
       </div>
+      {/* On phones the sections move to a tab bar along the bottom edge. */}
+      <nav className="bs-tabbar" aria-label="Sections">
+        {sections.map(({ id, short, hash, Icon }) => (
+          <a
+            key={id}
+            href={`#${hash}`}
+            aria-current={id === current ? "page" : undefined}
+            onClick={go(id)}
+          >
+            <Icon size={19} strokeWidth={1.6} />
+            <span>{short}</span>
+          </a>
+        ))}
+      </nav>
     </header>
   );
 }

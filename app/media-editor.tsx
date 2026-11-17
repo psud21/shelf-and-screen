@@ -3,6 +3,7 @@ import { CalendarDays, Check, ChevronDown, LoaderCircle, Sparkles, Trash2, X } f
 import { seriesLabel, statusNames, typeNames, yearLabel, type Media } from "../lib/media";
 import { getPageCount } from "../lib/bookshelf.mjs";
 import { fillInDetails, imdbIdFor } from "../lib/metadata";
+import { deviceStorage, readTmdbKey } from "../lib/storage";
 import MediaThumbnail from "./media-thumbnail";
 import "./media-editor.css";
 
@@ -43,7 +44,9 @@ export default function MediaEditor({
   async function lookUpDetails() {
     setLookup({ busy: true, message: "" });
     try {
-      const { item: found, filled } = await fillInDetails(item);
+      const { item: found, filled } = await fillInDetails(item, {
+        tmdbKey: readTmdbKey(deviceStorage()),
+      });
       // Apply only the filled fields, so anything typed meanwhile is kept.
       setItem((current) => ({
         ...current,
@@ -334,7 +337,9 @@ export default function MediaEditor({
                     (canLookUp
                       ? item.kind === "book"
                         ? "Summary, first-published year, genre and pages from Open Library."
-                        : "Director, running time, genres and summary from Wikidata and Wikipedia."
+                        : readTmdbKey(deviceStorage())
+                          ? "Director, running time, genres and summary from Wikidata and Wikipedia; artwork from TMDB."
+                          : "Director, running time, genres and summary from Wikidata and Wikipedia."
                       : "Add the IMDb ID below to look this title up.")}
                 </span>
               </div>

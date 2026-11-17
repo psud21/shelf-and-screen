@@ -191,3 +191,21 @@
     animation: none;
   }
 }
+
+/* A real backdrop: sharp, filling the top of the panel, darkened towards the text. */
+.film-backdrop.is-wide {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-position: center 25%;
+  filter: none;
+  opacity: 0.55;
+}
+.film-hero.has-backdrop::after {
+  background:
+    linear-gradient(90deg, #0f1116f2 0%, #0f1116b3 45%, #0f111640 100%),
+    linear-gradient(0deg, var(--surface-1) 0%, transparent 60%);
+}
+.film-hero.has-backdrop .film-hero-content {
+  padding-top: 96px;
+}

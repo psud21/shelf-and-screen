@@ -22,6 +22,11 @@ type Props = {
 
 export default function MovieDetail(props: Props) {
   const { item } = props;
+  // A real wide still when one is saved; otherwise the poster, blurred.
+  const [failedBackdrop, setFailedBackdrop] = useState("");
+  const saved = /^https:\/\//i.test(item.backdropUrl || "") ? item.backdropUrl! : "";
+  // If the backdrop cannot load, fall back to the blurred poster.
+  const backdrop = saved && saved !== failedBackdrop ? saved : "";
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [message, setMessage] = useState("");
@@ -54,16 +59,17 @@ export default function MovieDetail(props: Props) {
       busy={locked}
       onClose={props.onClose}
     >
-      <div className="film-hero">
-        {props.artwork && (
+      <div className={`film-hero ${backdrop ? "has-backdrop" : ""}`}>
+        {(backdrop || props.artwork) && (
           <img
-            key={props.artwork}
-            className="film-backdrop"
-            src={props.artwork}
+            key={backdrop || props.artwork}
+            className={`film-backdrop ${backdrop ? "is-wide" : ""}`}
+            src={backdrop || props.artwork}
             alt=""
             aria-hidden="true"
             onError={(event) => {
-              event.currentTarget.style.visibility = "hidden";
+              if (backdrop) setFailedBackdrop(backdrop);
+              else event.currentTarget.style.visibility = "hidden";
             }}
           />
         )}

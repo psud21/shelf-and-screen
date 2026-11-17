@@ -52,3 +52,88 @@
     order: 2;
   }
 }
+
+/* Bottom tab bar, phones only. */
+.bs-header .bs-tabbar {
+  display: none;
+}
+@media (max-width: 700px) {
+  .bs-header .bs-topnav {
+    display: none;
+  }
+  .bookshelf-page .bs-header {
+    min-height: 0;
+    height: auto;
+  }
+  .bookshelf-page .bs-header-inner {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .bs-header .bs-tabbar {
+    position: fixed;
+    width: auto;
+    height: auto;
+    gap: 0;
+    z-index: 50;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-top: 1px solid var(--line);
+  }
+  .bs-header .bs-tabbar a {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    padding: 5px 0 3px;
+    border-radius: var(--radius-md);
+    font-size: 11px;
+    font-weight: var(--weight-medium);
+    color: var(--text-3);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bs-header .bs-tabbar a::after {
+    display: none;
+  }
+  .bs-header .bs-tabbar a[aria-current="page"] {
+    color: var(--gold-hi);
+  }
+  .bs-header .bs-tabbar a:active {
+    background: var(--tint-2);
+  }
+  /* Keep the last content clear of the bar. */
+  .bookshelf-page {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+  .toast {
+    bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+}
+
+.connection-artwork {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.connection-artwork summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text-2);
+}
+.connection-artwork[open] summary {
+  margin-bottom: 4px;
+}
+.connection-artwork a {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-xs);
+  color: var(--gold);
+}

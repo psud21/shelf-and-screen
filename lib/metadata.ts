@@ -21,11 +21,19 @@ export type Details = Partial<
     | "pageCount"
   >
 > & {
+  /** Artwork from TMDB: a wide backdrop and, for titles without one, a poster. */
+  backdropUrl?: string;
+  posterUrl?: string;
   /** Who directed it and who created it; films prefer the first, shows the second. */
   directedBy?: string;
   createdBy?: string;
 };
-export type LookupOptions = { fetch?: Fetch; headers?: Record<string, string> };
+export type LookupOptions = {
+  fetch?: Fetch;
+  headers?: Record<string, string>;
+  /** A TMDB API key (v3) or read access token (v4). Optional; enables artwork. */
+  tmdbKey?: string;
+};
 
 const SUMMARY_LIMIT = 1200;
 
@@ -172,12 +180,25 @@ const bookGenres: [RegExp, string][] = [
   [/\bpsychology\b/i, "Psychology"],
   [/\bpoetry\b/i, "Poetry"],
   [/^history\b|\bhistory, modern\b/i, "History"],
-  [/\bscience\b/i, "Science"],
+  [/\bscience\b(?!\s*fiction)/i, "Science"],
 ];
+/**
+ * The genre most of a book's subjects point to. Shelving labels that name two
+ * genres at once ("Science Fiction & Fantasy") say nothing about the book, so
+ * they are ignored; ties go to the earlier genre in the list.
+ */
 export function bookGenre(subjects: string[]): string {
-  for (const [pattern, name] of bookGenres)
-    if (subjects.some((subject) => pattern.test(subject))) return name;
-  return "";
+  const useful = subjects.filter(
+    (subject) =>
+      !/science fiction\s*(&|and)\s*fantasy|fantasy\s*(&|and)\s*science fiction/i.test(subject),
+  );
+  let best = "";
+  let bestCount = 0;
+  for (const [pattern, name] of bookGenres) {
+    const count = useful.filter((subject) => pattern.test(subject)).length;
+    if (count > bestCount) [best, bestCount] = [name, count];
+  }
+  return best;
 }
 
 type SearchDoc = {
@@ -280,6 +301,14 @@ export function fillMissing(item: Media, details: Details): { item: Media; fille
     next.pageCount = details.pageCount;
     filled.push("page count");
   }
+  if (item.kind !== "book" && empty(item.backdropUrl) && details.backdropUrl) {
+    next.backdropUrl = details.backdropUrl;
+    filled.push("backdrop");
+  }
+  if (empty(item.coverUrl) && details.posterUrl) {
+    next.coverUrl = details.posterUrl;
+    filled.push("poster");
+  }
   if (empty(item.summary) && details.summary) {
     next.summary = details.summary;
     next.summarySource = details.summarySource;
@@ -303,6 +332,45 @@ export async function fillInDetails(
     throw new Error(
       "Add the title’s IMDb ID in Title & details first, so the right title is found.",
     );
-  const details = (await lookupScreen([id], options)).get(id);
-  return details ? fillMissing(item, details) : { item, filled: [] };
+  const details = { ...(await lookupScreen([id], options)).get(id) };
+  if (options.tmdbKey) Object.assign(details, await lookupArtwork(id, item.kind, options));
+  return Object.keys(details).length ? fillMissing(item, details) : { item, filled: [] };
+}
+
+/* ---------- artwork: TMDB (needs your own free API key) ---------- */
+
+type TmdbHit = { backdrop_path?: string | null; poster_path?: string | null };
+
+export async function lookupArtwork(
+  imdbId: string,
+  kind: Media["kind"],
+  options: LookupOptions,
+): Promise<Details> {
+  const key = options.tmdbKey?.trim();
+  if (!key || !/^tt\d+$/.test(imdbId)) return {};
+  // A long token is a v4 "read access token", sent as a header; a short one is a v3 key.
+  const bearer = key.length > 40;
+  const url = `https://api.themoviedb.org/3/find/${imdbId}?external_source=imdb_id${bearer ? "" : `&api_key=${encodeURIComponent(key)}`}`;
+  const request = options.fetch ?? ((input: string, init?: RequestInit) => fetch(input, init));
+  let response: Response;
+  try {
+    response = await request(url, {
+      headers: { ...options.headers, ...(bearer ? { Authorization: `Bearer ${key}` } : {}) },
+    });
+  } catch {
+    throw new Error("TMDB could not be reached. Check your connection.");
+  }
+  if (response.status === 401)
+    throw new Error("TMDB did not accept the API key. Check it and try again.");
+  if (!response.ok) throw new Error(`TMDB answered with error ${response.status}.`);
+  const data = (await response.json()) as { movie_results?: TmdbHit[]; tv_results?: TmdbHit[] };
+  const hit =
+    (kind === "tv" ? data.tv_results : data.movie_results)?.[0] ??
+    data.movie_results?.[0] ??
+    data.tv_results?.[0];
+  const details: Details = {};
+  if (hit?.backdrop_path)
+    details.backdropUrl = `https://image.tmdb.org/t/p/w1280${hit.backdrop_path}`;
+  if (hit?.poster_path) details.posterUrl = `https://image.tmdb.org/t/p/w500${hit.poster_path}`;
+  return details;
 }

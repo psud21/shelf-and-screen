@@ -1,4 +1,4 @@
-import type { Media } from "./media.ts";
+import { finishedOn, type Media } from "./media.ts";
 import { queueItems } from "./queue.ts";
 import { getPageCount, readingFraction } from "./bookshelf.mjs";
 import { episodeSummary } from "./episodes.mjs";
@@ -7,11 +7,7 @@ import { splitTVTitle } from "./tv-guide.mjs";
 // What the home screen shows, worked out from the library. Pure functions, so
 // every section is tested without a browser.
 
-/** The day a title was finished, falling back to the day it was rated. */
-export function finishedOn(item: Media): string {
-  const date = item.completedAt || item.ratedAt || "";
-  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "";
-}
+export { finishedOn };
 
 /** A season entry ("Andor - Season 2") rather than the show itself. */
 const isSeason = (item: Media) => item.kind === "tv" && splitTVTitle(item.title).number !== null;

@@ -11,7 +11,13 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { parseCSV, splitSeries } from "../lib/media.ts";
 import { parseLibrary, serializeLibrary } from "../lib/library.ts";
-import { fillMissing, imdbIdFor, lookupBook, lookupScreen } from "../lib/metadata.ts";
+import {
+  fillMissing,
+  imdbIdFor,
+  lookupArtwork,
+  lookupBook,
+  lookupScreen,
+} from "../lib/metadata.ts";
 import { normalizeText } from "../lib/normalize.mjs";
 import { splitTVTitle } from "../lib/tv-guide.mjs";
 
@@ -27,7 +33,11 @@ if (!file) {
   );
   process.exit(64);
 }
-const options = { headers: { "User-Agent": "ShelfAndScreen/1.0 (personal library tool)" } };
+const options = {
+  headers: { "User-Agent": "ShelfAndScreen/1.0 (personal library tool)" },
+  // Optional: film and show backdrops and missing posters from TMDB.
+  tmdbKey: process.env.TMDB_API_KEY || "",
+};
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const before = parseLibrary(readFileSync(file, "utf8"));
@@ -78,6 +88,15 @@ for (let offset = 0; offset < ids.length; offset += 40) {
   for (const [id, details] of await lookupScreen(ids.slice(offset, offset + 40), options))
     found.set(id, details);
   await pause(500);
+}
+if (options.tmdbKey) {
+  for (const item of screen.filter(
+    (entry) => !(entry.kind === "tv" && splitTVTitle(entry.title).number !== null),
+  )) {
+    const id = imdbIdFor(item);
+    found.set(id, { ...found.get(id), ...(await lookupArtwork(id, item.kind, options)) });
+    await pause(120);
+  }
 }
 for (const item of screen) {
   let details = found.get(imdbIdFor(item));

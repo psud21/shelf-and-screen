@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Clapperboard,
   Download,
-  LoaderCircle,
   MessageSquare,
   Pencil,
   Plus,
@@ -21,11 +20,12 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { seriesLabel, statusNames, typeNames, type Media } from "../lib/media";
+import { finishedOn, seriesLabel, statusNames, typeNames, type Media } from "../lib/media";
 import { groupTV } from "../lib/tv-guide.mjs";
 import { overviewRows } from "../lib/overview.mjs";
 import "./overview.css";
 import { ConnectButton, StorageLabel } from "./hub-context";
+import { RowPlaceholders } from "./placeholders";
 
 type Sort = "title" | "kind" | "score" | "completedAt";
 type Props = {
@@ -69,6 +69,11 @@ export default function Overview(props: Props) {
       new Map(tvGroups.flatMap((group) => group.entries.map((item) => [item.id, group] as const))),
     [tvGroups],
   );
+  const seasonCount = (item: Media) => {
+    const group = groupsByEntry.get(item.id);
+    const count = group && group.series[0]?.id === item.id ? group.seasons.length : 0;
+    return count ? `${count} ${count === 1 ? "season" : "seasons"}` : "";
+  };
   const rows = useMemo(
     () => overviewRows(props.items, { query, kind, status, kindleOnly, sort, ascending }),
     [props.items, query, kind, status, kindleOnly, sort, ascending],
@@ -251,7 +256,7 @@ export default function Overview(props: Props) {
                 </th>
                 {heading("score", "My rating", "ov-rating-col")}
                 <th scope="col" className="ov-progress-col">
-                  Progress / format
+                  Genre
                 </th>
                 {heading("completedAt", "Finished", "ov-date-col")}
                 <th scope="col" className="ov-edit-col">
@@ -262,9 +267,8 @@ export default function Overview(props: Props) {
             <tbody>
               {props.loading ? (
                 <tr>
-                  <td colSpan={7} className="ov-empty">
-                    <LoaderCircle size={20} className="spin" />
-                    Loading your collection…
+                  <td colSpan={7}>
+                    <RowPlaceholders variant="table" count={8} />
                   </td>
                 </tr>
               ) : visible.length === 0 ? (
@@ -307,6 +311,7 @@ export default function Overview(props: Props) {
                               {[
                                 item.creator || typeNames[item.kind],
                                 seriesLabel(item),
+                                seasonCount(item),
                                 item.owned && item.kind === "book" ? "Kindle" : "",
                               ]
                                 .filter(Boolean)
@@ -346,12 +351,12 @@ export default function Overview(props: Props) {
                       </td>
                       <td className="ov-progress-col">
                         <span>
-                          {item.progress ||
-                            (item.kind === "book" && item.owned ? "Kindle" : item.platform) ||
-                            "—"}
+                          {item.status === "progress" && item.progress
+                            ? item.progress
+                            : item.genre || "—"}
                         </span>
                       </td>
-                      <td className="ov-date-col">{dateLabel(item.completedAt)}</td>
+                      <td className="ov-date-col">{dateLabel(finishedOn(item))}</td>
                       <td className="ov-edit-col">
                         <button
                           className="bs-icon"

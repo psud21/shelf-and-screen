@@ -8,7 +8,6 @@ import {
   CalendarDays,
   ChevronDown,
   Download,
-  LoaderCircle,
   Pencil,
   Plus,
   Search,
@@ -25,6 +24,7 @@ import "./movie-gallery.css";
 import "./tv-gallery.css";
 import { ConnectButton, StorageLabel } from "./hub-context";
 import GeneratedCover from "./generated-cover";
+import { PosterPlaceholders } from "./placeholders";
 
 type Props = {
   items: Media[];
@@ -379,10 +379,7 @@ export default function TVGallery(props: Props) {
         </div>
         <section className="mg-grid" aria-label="TV poster gallery" aria-busy={props.loading}>
           {props.loading ? (
-            <div className="mg-empty">
-              <LoaderCircle size={24} className="spin" />
-              <p>Loading your shows…</p>
-            </div>
+            <PosterPlaceholders />
           ) : rows.length === 0 ? (
             <div className="mg-empty">
               <Tv size={30} strokeWidth={1} />

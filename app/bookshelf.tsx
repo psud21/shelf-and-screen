@@ -29,15 +29,16 @@ import { type Media, seriesLabel, statusNames, yearLabel } from "../lib/media";
 import {
   getPageCount,
   packShelves,
-  ratingColors,
   sortBooks,
   spineAppearance,
   spineTitle,
 } from "../lib/bookshelf.mjs";
 import "./bookshelf.css";
+import "./shelf.css";
 import BookCover from "./book-cover";
 import BookReveal, { type BookOrigin } from "./book-reveal";
 import { ConnectButton, StorageLabel } from "./hub-context";
+import { ShelfPlaceholder } from "./placeholders";
 
 type Shelf = "all" | "planned" | "progress" | "finished" | "paused" | "kindle";
 type Sort = "date" | "score" | "pages" | "genre";
@@ -266,10 +267,7 @@ export default function Bookshelf(props: Props) {
         </div>
         <div className="bs-stage" ref={stage} aria-busy={props.loading}>
           {props.loading ? (
-            <div className="bs-empty">
-              <LoaderCircle size={24} className="spin" />
-              <p>Making room on your shelves…</p>
-            </div>
+            <ShelfPlaceholder />
           ) : !books.length ? (
             <div className="bs-empty">
               <BookOpen size={35} />
@@ -333,14 +331,17 @@ export default function Bookshelf(props: Props) {
                       }}
                       aria-haspopup="dialog"
                     >
-                      <span className="bs-spine-fill" />
-                      <span className="bs-spine-title">{spineTitle(book.title)}</span>
+                      {reading && <span className="bs-spine-ribbon" aria-hidden="true" />}
                       {book.owned && (
-                        <Tablet
-                          className="bs-spine-kindle"
-                          size={11}
-                          aria-label="Owned on Kindle"
-                        />
+                        <span className="bs-spine-kindle" aria-hidden="true">
+                          K
+                        </span>
+                      )}
+                      <span className="bs-spine-title">{spineTitle(book.title)}</span>
+                      {!unrated && (
+                        <span className="bs-spine-score" aria-hidden="true">
+                          {book.score}
+                        </span>
                       )}
                     </button>
                   );
@@ -350,20 +351,17 @@ export default function Bookshelf(props: Props) {
           )}
         </div>
         <div className="bs-shelf-meta">
-          <div className="bs-legend">
-            <span>Rated 0</span>
-            <span className="bs-swatches" aria-hidden="true">
-              {ratingColors.map((color) => (
-                <span style={{ background: color }} key={color} />
-              ))}
+          <p className="bs-legend">
+            <span>
+              <span className="bs-legend-score">87</span> your rating
             </span>
-            <span>100</span>
-            <span className="bs-legend-unrated" />
-            Unrated
-          </div>
-          <p>
-            Height = pages <span>·</span> outlined and filled = in progress <span>·</span> unknown
-            length = standard height
+            <span>
+              <span className="bs-legend-kindle">K</span> on Kindle
+            </span>
+            <span>
+              <span className="bs-legend-ribbon" /> reading, with progress
+            </span>
+            <span>Taller spines are longer books</span>
           </p>
         </div>
         {books.length > 0 && (

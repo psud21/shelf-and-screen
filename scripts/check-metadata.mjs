@@ -5,6 +5,7 @@ import {
   fillInDetails,
   fillMissing,
   imdbIdFor,
+  lookupArtwork,
   lookupBook,
   lookupScreen,
   tidyGenres,
@@ -61,6 +62,22 @@ assert.equal(
 );
 assert.equal(bookGenre(["Fiction", "Fiction, fantasy, epic", "Magic"]), "Fantasy");
 assert.equal(bookGenre(["Fiction", "General"]), "");
+// Combined shelving labels don't decide; the subjects that agree most do.
+assert.equal(
+  bookGenre([
+    "Science Fiction & Fantasy",
+    "Fiction, fantasy, epic",
+    "Epic fantasy",
+    "Science fiction",
+  ]),
+  "Fantasy",
+);
+assert.equal(bookGenre(["Fantasy & Science Fiction"]), "");
+assert.equal(
+  bookGenre(["Science fiction", "Fiction, science fiction, general", "Life on other planets"]),
+  "Science fiction",
+);
+assert.equal(bookGenre(["Popular science", "Science"]), "Science");
 assert.equal(imdbIdFor({ sourceId: "tt2356777_s1" }), "tt2356777");
 assert.equal(imdbIdFor({ sourceId: "" }), "");
 
@@ -211,6 +228,51 @@ await assert.rejects(
   lookupScreen(["tt1"], { fetch: async () => new Response("", { status: 503 }) }),
   /error 503/,
 );
+
+/* ---------- artwork from TMDB, only with a key ---------- */
+const tmdbCalls = [];
+const tmdb = async (url, init) => {
+  tmdbCalls.push({ url, auth: init?.headers?.Authorization });
+  if (url.includes("tt0000401")) return new Response("{}", { status: 401 });
+  return new Response(
+    JSON.stringify({
+      movie_results: url.includes("tt6751668")
+        ? [{ backdrop_path: "/wide.jpg", poster_path: "/tall.jpg" }]
+        : [],
+      tv_results: url.includes("tt0306414")
+        ? [{ backdrop_path: "/wire.jpg", poster_path: null }]
+        : [],
+    }),
+    { status: 200 },
+  );
+};
+assert.deepEqual(await lookupArtwork("tt6751668", "movie", { fetch: tmdb }), {});
+assert.equal(tmdbCalls.length, 0);
+assert.deepEqual(await lookupArtwork("tt6751668", "movie", { fetch: tmdb, tmdbKey: "abc123" }), {
+  backdropUrl: "https://image.tmdb.org/t/p/w1280/wide.jpg",
+  posterUrl: "https://image.tmdb.org/t/p/w500/tall.jpg",
+});
+assert.match(tmdbCalls[0].url, /find\/tt6751668\?external_source=imdb_id&api_key=abc123$/);
+const token = "eyJ" + "x".repeat(60);
+assert.deepEqual(await lookupArtwork("tt0306414", "tv", { fetch: tmdb, tmdbKey: token }), {
+  backdropUrl: "https://image.tmdb.org/t/p/w1280/wire.jpg",
+});
+assert.equal(tmdbCalls[1].auth, `Bearer ${token}`);
+assert.ok(!tmdbCalls[1].url.includes("api_key"));
+await assert.rejects(
+  lookupArtwork("tt0000401", "movie", { fetch: tmdb, tmdbKey: "bad" }),
+  /did not accept/,
+);
+// Artwork fills only empty fields, and never a book.
+const art = {
+  backdropUrl: "https://image.tmdb.org/t/p/w1280/wide.jpg",
+  posterUrl: "https://image.tmdb.org/t/p/w500/tall.jpg",
+};
+assert.deepEqual(fillMissing(film, art).filled, ["backdrop", "poster"]);
+assert.deepEqual(fillMissing({ ...film, coverUrl: "https://example.com/mine.jpg" }, art).filled, [
+  "backdrop",
+]);
+assert.equal(fillMissing({ ...film, kind: "book" }, art).item.backdropUrl, undefined);
 
 console.log(
   "PASS: summaries and genres tidied, only empty fields filled, films and shows from Wikidata and Wikipedia, books from Open Library with title checks, and clear errors.",

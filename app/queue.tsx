@@ -21,6 +21,7 @@ import MediaNavigation from "./media-navigation";
 import MediaThumbnail from "./media-thumbnail";
 import "./queue.css";
 import { ConnectButton } from "./hub-context";
+import { RowPlaceholders } from "./placeholders";
 
 type Props = {
   items: Media[];
@@ -324,10 +325,7 @@ export default function Queue(props: Props) {
         </div>
         <div className="queue-list" aria-busy={props.loading}>
           {props.loading ? (
-            <div className="queue-empty">
-              <LoaderCircle size={24} className="spin" />
-              <p>Opening your queue…</p>
-            </div>
+            <RowPlaceholders variant="queue" />
           ) : !visible.length ? (
             <div className="queue-empty">
               <BookmarkPlus size={29} />

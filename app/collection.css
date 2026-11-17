@@ -310,26 +310,6 @@
     ),
     repeating-linear-gradient(90deg, transparent 0 2px, var(--tint-1) 2px 3px);
 }
-.bs-spine:after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.18;
-  pointer-events: none;
-}
-.bs-spine.is-reading:before {
-  opacity: 0.5;
-}
-.bs-spine.is-unrated:before {
-  opacity: 0.25;
-}
-.bs-spine.is-reading .bs-spine-fill {
-  background: linear-gradient(90deg, var(--gold-lo), var(--gold-lo) 30%, var(--gold-lo));
-}
 .bs-spine.is-active,
 .bs-spine:hover,
 .bs-spine:focus-visible {
