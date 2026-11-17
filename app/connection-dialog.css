@@ -1,0 +1,54 @@
+.connection-current {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.connection-current strong {
+  color: var(--ink);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.connection-body .source-help p + p {
+  margin-top: 8px;
+}
+.modal-actions .connection-disconnect {
+  margin-right: auto;
+}
+
+/* The storage button in the page header. */
+.bs-header nav {
+  margin-left: auto;
+}
+.bs-storage {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border: 1px solid #353944;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #abb1bf;
+  white-space: nowrap;
+}
+.bs-storage:hover {
+  color: #e8e7e3;
+  border-color: #4a4e5c;
+}
+.bs-storage.needs-setup {
+  color: #f3e7bc;
+  border-color: #d9b66d;
+}
+@media (max-width: 700px) {
+  .bs-storage {
+    order: 1;
+    margin-left: auto;
+    padding: 7px 9px;
+  }
+  .bs-header nav {
+    order: 2;
+  }
+}

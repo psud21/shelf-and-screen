@@ -1,0 +1,123 @@
+.service-export {
+  gap: 18px;
+}
+.export-intro {
+  display: flex;
+  gap: 17px;
+  align-items: center;
+  padding: 4px 0;
+}
+.export-count {
+  font-size: 38px;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  color: var(--gold, #d9b66d);
+  font-weight: 500;
+}
+.export-intro h3 {
+  font-size: 17px;
+  font-weight: 550;
+  margin: 0 0 6px;
+  color: #ece9e2;
+}
+.export-intro p,
+.export-footnote {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #a7a9af;
+  margin: 0;
+}
+.export-notes {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px !important;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.export-notes input {
+  margin: 4px 0 0;
+  accent-color: #d9b66d;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.export-notes small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #999ca5;
+  font-weight: 400;
+}
+.export-download {
+  justify-content: center;
+  width: 100%;
+}
+.export-import-link {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  color: #d9b66d;
+  font-size: 12px;
+  padding: 3px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.export-issues {
+  border: 1px solid #4d4432;
+  border-radius: 6px;
+  background: #25231e;
+  font-size: 12px;
+}
+.export-issues summary {
+  cursor: pointer;
+  color: #e2c996;
+  padding: 12px 14px;
+}
+.export-issues ul {
+  list-style: none;
+  padding: 0 14px;
+  margin: 0;
+  max-height: 190px;
+  overflow: auto;
+}
+.export-issues li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid #403a30;
+}
+.export-issues strong {
+  color: #e4e1d9;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.export-issues p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #b0aa9e;
+  margin: 5px 0 0;
+}
+.export-issues .secondary {
+  padding: 7px 10px;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+@media (max-width: 420px) {
+  .export-intro h3 {
+    font-size: 15px;
+  }
+  .export-intro p {
+    font-size: 11px;
+  }
+  .service-export .source-tabs {
+    flex-wrap: wrap;
+  }
+  .export-count {
+    font-size: 34px;
+  }
+}

@@ -1,0 +1,217 @@
+.book-reveal-layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  min-height: 470px;
+}
+.book-reveal-stage {
+  position: relative;
+  isolation: isolate;
+  perspective: 1400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 450px;
+  background: linear-gradient(160deg, #302c23, #161922 65%);
+  border-right: 1px solid #383a43;
+}
+.book-reveal-halo {
+  position: absolute;
+  inset: 15% 0;
+  z-index: -1;
+  background: radial-gradient(ellipse, #d9b66d18, transparent 65%);
+}
+.book-object {
+  position: relative;
+  width: 180px;
+  height: 270px;
+  transform: rotateY(-9deg);
+  transform-style: preserve-3d;
+  z-index: 2;
+}
+.book-jacket {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(17px);
+  backface-visibility: hidden;
+  box-shadow: 8px 9px 24px #0007;
+  border-radius: 2px 5px 5px 2px;
+  overflow: hidden;
+}
+.book-jacket:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #0005, transparent 3%, #ffffff17 5%, transparent 9%);
+}
+.book-jacket .bs-cover {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  border-radius: 0;
+}
+.book-jacket .bs-cover img {
+  object-fit: contain;
+}
+.book-jacket .bs-cover > span {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  line-height: 1.35;
+  padding: 20px;
+}
+.book-side {
+  position: absolute;
+  left: -17px;
+  top: 0;
+  width: 34px;
+  height: 270px;
+  transform: rotateY(-90deg);
+  background: var(--book-color);
+  color: var(--book-ink);
+  backface-visibility: hidden;
+  box-shadow: inset -3px 0 #0002;
+}
+.book-side > span {
+  display: block;
+  writing-mode: vertical-rl;
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 15px 8px;
+  max-height: 100%;
+  overflow: hidden;
+}
+.book-page-edge {
+  position: absolute;
+  right: -13px;
+  top: 3px;
+  width: 26px;
+  height: 264px;
+  transform: rotateY(90deg);
+  background: repeating-linear-gradient(90deg, #ece7d7 0 1px, #cfc9b7 1px 2px);
+  box-shadow: inset 0 0 7px #0004;
+}
+.book-object-shadow {
+  position: absolute;
+  width: 180px;
+  height: 30px;
+  top: calc(50% + 135px);
+  background: #0008;
+  border-radius: 50%;
+  filter: blur(14px);
+}
+.book-reveal-caption {
+  position: absolute;
+  bottom: 31px;
+  font-size: 9px;
+  letter-spacing: 1.6px;
+  color: #a19e91;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.book-reveal-copy {
+  padding: 56px 35px 35px;
+  animation: book-copy-arrive 0.4s 0.12s both;
+}
+.book-reveal-copy h2 {
+  font-size: 28px;
+  margin-top: 13px;
+}
+.book-reveal-copy > .story-meta {
+  margin-top: 12px;
+}
+.book-reveal-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.book-reveal-progress {
+  font-size: 12px;
+  color: #d4cba5;
+  margin-top: 13px;
+  line-height: 1.8;
+}
+.book-reveal-note {
+  margin-top: 26px;
+  padding-top: 21px;
+  border-top: 1px solid #383d49;
+}
+.book-reveal-copy > .story-action {
+  margin-top: 25px;
+}
+.book-reveal-release {
+  font-size: 12px;
+  color: #d9c891;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  line-height: 1.8;
+  margin-top: 21px;
+}
+.book-reveal-release svg {
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+.book-reveal-release small {
+  display: block;
+  color: #a8adbb;
+  font-size: 11px;
+}
+@keyframes book-copy-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 650px) {
+  .book-reveal-layout {
+    grid-template-columns: 1fr;
+  }
+  .book-reveal-stage {
+    min-height: 320px;
+    border-right: 0;
+    border-bottom: 1px solid #383a43;
+  }
+  .book-object {
+    width: 146px;
+    height: 219px;
+  }
+  .book-side {
+    height: 219px;
+  }
+  .book-page-edge {
+    height: 213px;
+  }
+  .book-object-shadow {
+    top: calc(50% + 109px);
+    width: 145px;
+  }
+  .book-reveal-caption {
+    bottom: 17px;
+    font-size: 9px;
+  }
+  .book-reveal-copy {
+    padding: 25px 23px;
+  }
+  .book-reveal-copy h2 {
+    font-size: 24px;
+  }
+  .book-reveal-score {
+    margin-top: 17px;
+  }
+  .book-reveal-note {
+    margin-top: 20px;
+    padding-top: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-reveal-copy {
+    animation: none;
+  }
+}

@@ -1,0 +1,158 @@
+.tvg-extras {
+  margin: 12px 0 24px;
+}
+.tvg-extras .episode-panel {
+  margin-top: 0;
+}
+.tvg-release {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-top: 1px solid #353c48;
+  padding-top: 20px;
+  margin-top: 20px;
+  color: #acb3c3;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.tvg-release > svg {
+  color: #d9b66d;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+.tvg-release > div {
+  flex: 1;
+  min-width: 0;
+}
+.tvg-release h3 {
+  font-size: 15px;
+  color: #eee;
+  margin: 7px 0;
+}
+.tvg-release p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 5px;
+}
+.tvg-release > .story-action {
+  font-size: 11px;
+  margin-top: 0;
+  flex-shrink: 0;
+}
+.tvg-provenance {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  margin-top: 8px;
+}
+.tvg-provenance a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.tvg-history {
+  border-top: 1px solid #353c48;
+  padding-top: 14px;
+  margin-top: 20px;
+}
+.tvg-history summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  list-style: none;
+  min-height: 34px;
+  font-size: 12px;
+  color: #aeb4c2;
+}
+.tvg-history summary::-webkit-details-marker {
+  display: none;
+}
+.tvg-history summary > span {
+  font-size: 9px;
+  border: 1px solid #3b414e;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.tvg-history summary > svg {
+  margin-left: auto;
+}
+.tvg-history[open] summary > svg {
+  transform: rotate(180deg);
+}
+.tvg-history > p {
+  font-size: 11px;
+  color: #aeb4c2;
+  line-height: 1.7;
+  margin: 8px 0;
+}
+.tvg-history > div {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.tvg-history-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #3b414e;
+  border-radius: 4px;
+  padding: 5px 8px;
+  color: #aeb4c2;
+}
+.tvg-history-entry button {
+  color: #ddd;
+  font-size: 11px;
+  min-height: 34px;
+  padding: 4px 0;
+}
+.tvg-history-entry button[aria-pressed="true"] {
+  color: #d9b66d;
+}
+.tvg-history-entry > span {
+  font-size: 11px;
+}
+.tvg-history-entry small {
+  font-size: 9px;
+  margin-left: 2px;
+}
+.tvg-history-entry .tvg-history-edit {
+  display: grid;
+  place-items: center;
+  padding: 5px;
+}
+.tvg-release-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #aeb4c2;
+  font-size: 11px;
+  padding: 15px 0 0;
+}
+.tvg-release-add:hover {
+  color: #d9b66d;
+}
+.tvg-season-notes {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .tvg-release {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .tvg-release > .story-action {
+    margin-left: 26px;
+  }
+  .tvg-history-entry {
+    flex: 1 1 150px;
+  }
+  .tvg-history-entry > button:first-child {
+    margin-right: auto;
+  }
+}
