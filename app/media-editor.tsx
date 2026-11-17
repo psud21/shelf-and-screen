@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { CalendarDays, Check, ChevronDown, LoaderCircle, Trash2, X } from "lucide-react";
-import { statusNames, typeNames, type Media } from "../lib/media";
+import { CalendarDays, Check, ChevronDown, LoaderCircle, Sparkles, Trash2, X } from "lucide-react";
+import { seriesLabel, statusNames, typeNames, yearLabel, type Media } from "../lib/media";
 import { getPageCount } from "../lib/bookshelf.mjs";
+import { fillInDetails, imdbIdFor } from "../lib/metadata";
 import MediaThumbnail from "./media-thumbnail";
 import "./media-editor.css";
 
@@ -34,9 +35,37 @@ export default function MediaEditor({
   // Typing only redraws this panel, not the whole collection behind it.
   const [item, setItem] = useState(initial);
   const [confirmRemoval, setConfirmRemoval] = useState(false);
+  const [lookup, setLookup] = useState<{ busy: boolean; message: string }>({
+    busy: false,
+    message: "",
+  });
+  const canLookUp = item.kind === "book" ? !!item.title.trim() : !!imdbIdFor(item);
+  async function lookUpDetails() {
+    setLookup({ busy: true, message: "" });
+    try {
+      const { item: found, filled } = await fillInDetails(item);
+      // Apply only the filled fields, so anything typed meanwhile is kept.
+      setItem((current) => ({
+        ...current,
+        ...Object.fromEntries(
+          Object.entries(found).filter(
+            ([key, value]) => value !== item[key as keyof Media] && key !== "id",
+          ),
+        ),
+      }));
+      setLookup({
+        busy: false,
+        message: filled.length
+          ? `Added ${filled.join(", ")}. Check it, then save.`
+          : "Nothing new found. Everything available is already here.",
+      });
+    } catch (cause) {
+      setLookup({ busy: false, message: (cause as Error).message });
+    }
+  }
   const dialog = useRef<HTMLDialogElement>(null);
   const title = existing
-    ? `Edit ${typeNames[item.kind].toLowerCase()}`
+    ? `Edit ${item.kind === "tv" ? "TV show" : typeNames[item.kind].toLowerCase()}`
     : `Add ${item.kind === "tv" ? "a TV show" : item.kind === "movie" ? "a movie" : "a book"}`;
   const update = (patch: Partial<Media>) => setItem((current) => ({ ...current, ...patch }));
   useEffect(() => {
@@ -161,10 +190,13 @@ export default function MediaEditor({
               <div>
                 <span className="editor-kicker">{typeNames[item.kind]}</span>
                 <h3>{item.title}</h3>
-                <p>
-                  {[item.creator, item.year].filter(Boolean).join(" · ") ||
-                    "A story in your collection"}
-                </p>
+                {(item.creator || item.year || item.series) && (
+                  <p>
+                    {[item.creator, yearLabel(item.year), seriesLabel(item)]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -283,6 +315,29 @@ export default function MediaEditor({
               <ChevronDown size={16} />
             </summary>
             <div className="editor-section-body">
+              <div className="editor-lookup">
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={!canLookUp || lookup.busy}
+                  onClick={lookUpDetails}
+                >
+                  {lookup.busy ? (
+                    <LoaderCircle size={14} className="spin" />
+                  ) : (
+                    <Sparkles size={14} />
+                  )}
+                  Fill in missing details
+                </button>
+                <span className="form-hint" role="status" aria-live="polite">
+                  {lookup.message ||
+                    (canLookUp
+                      ? item.kind === "book"
+                        ? "Summary, first-published year, genre and pages from Open Library."
+                        : "Director, running time, genres and summary from Wikidata and Wikipedia."
+                      : "Add the IMDb ID below to look this title up.")}
+                </span>
+              </div>
               {existing && identity}
               <div className="form-row">
                 <label>
@@ -325,6 +380,68 @@ export default function MediaEditor({
                     ? "Books with an ISBN find a cover on their own. Paste an image address to choose a different one."
                     : "Paste the address of a poster image, for example from the title’s page on TMDB."}
                 </span>
+              </label>
+              {item.kind === "book" && (
+                <div className="form-row">
+                  <label>
+                    Series
+                    <input
+                      maxLength={300}
+                      value={item.series || ""}
+                      placeholder="e.g. The Stormlight Archive"
+                      onChange={(event) => update({ series: event.target.value || undefined })}
+                    />
+                  </label>
+                  <label>
+                    Number in series
+                    <input
+                      maxLength={20}
+                      value={item.seriesNumber || ""}
+                      placeholder="e.g. 2"
+                      onChange={(event) =>
+                        update({ seriesNumber: event.target.value.trim() || undefined })
+                      }
+                    />
+                  </label>
+                </div>
+              )}
+              {item.kind === "movie" && (
+                <label>
+                  Running time <span className="field-note">minutes</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={1500}
+                    step={1}
+                    value={item.runtime ?? ""}
+                    placeholder="Not known"
+                    onChange={(event) =>
+                      update({
+                        runtime: event.target.value === "" ? undefined : Number(event.target.value),
+                      })
+                    }
+                  />
+                </label>
+              )}
+              <label>
+                What it’s about
+                <textarea
+                  rows={4}
+                  maxLength={5000}
+                  value={item.summary || ""}
+                  placeholder="A short description of the story."
+                  onChange={(event) =>
+                    update({
+                      summary: event.target.value || undefined,
+                      // A summary you write yourself no longer comes from elsewhere.
+                      summarySource: undefined,
+                      summaryUrl: undefined,
+                    })
+                  }
+                />
+                {item.summarySource && (
+                  <span className="form-hint">From {item.summarySource}.</span>
+                )}
               </label>
               {item.kind === "book" && (
                 <div className="form-row">

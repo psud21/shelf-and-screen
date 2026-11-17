@@ -21,7 +21,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { statusNames, typeNames, type Media } from "../lib/media";
+import { seriesLabel, statusNames, typeNames, type Media } from "../lib/media";
 import { groupTV } from "../lib/tv-guide.mjs";
 import { overviewRows } from "../lib/overview.mjs";
 import "./overview.css";
@@ -304,8 +304,13 @@ export default function Overview(props: Props) {
                               {item.notes && <MessageSquare size={13} aria-label="Has notes" />}
                             </span>
                             <span className="ov-creator">
-                              {item.creator || typeNames[item.kind]}
-                              {item.owned && item.kind === "book" ? " · Kindle owned" : ""}
+                              {[
+                                item.creator || typeNames[item.kind],
+                                seriesLabel(item),
+                                item.owned && item.kind === "book" ? "Kindle" : "",
+                              ]
+                                .filter(Boolean)
+                                .join(" · ")}
                             </span>
                             <span className="ov-mobile-status">{statusNames[item.status]}</span>
                           </span>

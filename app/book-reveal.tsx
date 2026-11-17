@@ -1,8 +1,9 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { BookOpen, CalendarDays, Pencil, Tablet } from "lucide-react";
-import { statusNames, type Media } from "../lib/media";
+import { seriesLabel, statusNames, yearLabel, type Media } from "../lib/media";
 import { getPageCount, spineAppearance } from "../lib/bookshelf.mjs";
 import StoryDialog from "./story-dialog";
+import StoryText from "./story-text";
 import "./book-reveal.css";
 
 export type BookOrigin = { x: number; y: number; width: number; height: number };
@@ -73,9 +74,16 @@ export default function BookReveal({
         <div className="book-reveal-copy">
           <span className="story-kicker">A STORY ON YOUR SHELF</span>
           <h2>{book.title}</h2>
+          {book.series && <p className="story-series">{seriesLabel(book)}</p>}
           <p className="story-meta">
-            {book.creator || "Author not added"}
-            {pages ? ` · ${pages.toLocaleString()} pages` : ""}
+            {[
+              book.creator || "Author not added",
+              yearLabel(book.year),
+              pages ? `${pages.toLocaleString()} pages` : "",
+              book.genre,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
           <div className="book-reveal-score">
             <span className={`story-score ${book.score === null ? "is-unrated" : ""}`}>
@@ -98,11 +106,7 @@ export default function BookReveal({
           </div>
           {book.progress && <p className="book-reveal-progress">{book.progress}</p>}
           <div className="book-reveal-note">
-            <div className="story-note-label">YOUR NOTES</div>
-            <p className="story-notes">
-              {book.notes ||
-                "What stayed with you? Add a note, a favorite passage, or a reason to read this next."}
-            </p>
+            <StoryText item={book} onAddNote={onEdit} />
           </div>
           {book.nextReleaseTitle && (
             <p className="book-reveal-release">

@@ -25,7 +25,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { type Media, statusNames } from "../lib/media";
+import { type Media, seriesLabel, statusNames, yearLabel } from "../lib/media";
 import {
   getPageCount,
   packShelves,
@@ -411,13 +411,18 @@ export default function Bookshelf(props: Props) {
                   </span>
                 )}
               </div>
+              {active.series && <p className="story-series">{seriesLabel(active)}</p>}
               <p>
-                {active.creator || "Author not added"} <span>·</span>{" "}
-                {activePages ? `${activePages.toLocaleString()} pages` : "Page count not added"}{" "}
-                <span>·</span>{" "}
-                {active.status === "finished" && completed
-                  ? `Finished ${completed}`
-                  : statusNames[active.status]}
+                {[
+                  active.creator || "Author not added",
+                  yearLabel(active.year),
+                  activePages ? `${activePages.toLocaleString()} pages` : "",
+                  active.status === "finished" && completed
+                    ? `Finished ${completed}`
+                    : statusNames[active.status],
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
               </p>
               <div className="bs-detail-rating">
                 {active.score !== null ? (
@@ -436,10 +441,7 @@ export default function Bookshelf(props: Props) {
               {active.notes ? (
                 <p className="bs-book-notes">{active.notes}</p>
               ) : (
-                <p className="bs-book-notes">
-                  No notes yet. Select “Update book” to add a rating, progress, or a thought to
-                  remember.
-                </p>
+                active.summary && <p className="bs-book-notes bs-book-summary">{active.summary}</p>
               )}
               {active.nextReleaseTitle && (
                 <p className="bs-detail-release">

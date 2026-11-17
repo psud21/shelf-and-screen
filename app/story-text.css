@@ -1,0 +1,52 @@
+.story-text {
+  display: grid;
+  gap: 18px;
+}
+.story-summary {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  color: var(--text-2);
+  max-width: 62ch;
+}
+.story-summary.is-clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.story-credit {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: var(--text-xs);
+  color: var(--text-3);
+}
+.story-credit a,
+.story-credit button {
+  padding: 0;
+  color: var(--text-3);
+  text-decoration: underline;
+  text-decoration-color: var(--line-bold);
+  text-underline-offset: 3px;
+}
+.story-credit a:hover,
+.story-credit button:hover {
+  color: var(--text);
+}
+.story-own-notes .story-note-label {
+  margin-bottom: 6px;
+}
+.story-add-note {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  font-size: var(--text-sm);
+  color: var(--text-3);
+  transition: color var(--fast) var(--ease);
+}
+.story-add-note:hover:not(:disabled) {
+  color: var(--gold-hi);
+}

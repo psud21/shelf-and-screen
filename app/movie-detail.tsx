@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Check, ChevronLeft, ChevronRight, LoaderCircle, Pencil } from "lucide-react";
-import { statusNames, type Media } from "../lib/media";
+import { runtimeLabel, statusNames, type Media } from "../lib/media";
 import { localToday } from "../lib/calendar-date.mjs";
 import StoryDialog from "./story-dialog";
+import StoryText from "./story-text";
 import "./movie-detail.css";
 
 type Props = {
@@ -76,8 +77,9 @@ export default function MovieDetail(props: Props) {
             </span>
             <h2>{item.title}</h2>
             <p className="story-meta">
-              {[item.year, item.creator, item.genre].filter(Boolean).join(" · ") ||
-                (isTV ? "Your TV collection" : "Your movie collection")}
+              {[item.year, item.creator, runtimeLabel(item.runtime), item.genre]
+                .filter(Boolean)
+                .join(" · ")}
             </p>
             <div className="film-rating-row">
               <span className={`story-score ${item.score === null ? "is-unrated" : ""}`}>
@@ -111,10 +113,7 @@ export default function MovieDetail(props: Props) {
         </div>
       </div>
       <div className="film-body">
-        <div className="story-note-label">YOUR NOTES</div>
-        <p className="story-notes">
-          {item.notes || "What stayed with you? Add a note or a reason to watch this next."}
-        </p>
+        <StoryText item={item} disabled={locked} onAddNote={props.onEdit} />
         {item.progress && <p className="film-progress">Last watched · {item.progress}</p>}
         {error && (
           <div className="story-error" role="alert">
@@ -138,7 +137,7 @@ export default function MovieDetail(props: Props) {
             >
               <ChevronLeft size={17} />
             </button>
-            <span>{isTV ? "YOUR NEXT SHOW" : "YOUR NEXT FRAME"}</span>
+            <span>{isTV ? "Show" : "Film"}</span>
             <button
               className="film-step"
               aria-label={isTV ? "Next show" : "Next movie"}

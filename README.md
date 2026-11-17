@@ -53,6 +53,39 @@ Images load directly from the sites that host them (Open Library, TMDB, or
 wherever a link you paste points), so those sites can see which images your
 browser requests.
 
+Book titles in Goodreads style ("Words of Radiance (The Stormlight Archive, #2)")
+are stored as the plain title plus `series` and `seriesNumber`. `year` is the year
+of first publication or release, not of a particular edition.
+
+## Filling in details
+
+In the editor, **Title & details → Fill in missing details** looks a title up in
+open sources that need no account: Wikidata and Wikipedia for films and shows
+(director or creator, running time, genres, a summary), and Open Library for books
+(first-published year, genre, page count, a summary). It only fills empty fields,
+and the result is shown in the editor for you to check before saving. Films and
+shows are found by their IMDb ID; books by ISBN, then by title and author, and a
+result for a different title is never used. The lookup sends the title, author,
+ISBN or IMDb ID to those services. Summaries carry a link to their source.
+
+To do the same for a whole library file at once:
+
+```
+node scripts/backfill-library.mjs path/to/library.json [--goodreads goodreads_export.csv] [--write]
+```
+
+With a Goodreads export it also replaces edition years with original publication
+years, and it splits series out of book titles. Without `--write` it only reports
+what would change.
+
+## Design tokens
+
+Every colour, type size, weight, radius and shadow is a named token in
+[`app/tokens.css`](app/tokens.css); screens use the names, never raw values.
+Titles of pages, books, films and shows are set in Newsreader; the interface in
+DM Sans. Both fonts are bundled with the site rather than loaded from a font
+service. Titles with no artwork get a drawn cover (`app/generated-cover.tsx`).
+
 ## Service exports
 
 Export → Goodreads or Criticker downloads a CSV to upload on that service's import

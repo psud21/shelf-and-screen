@@ -7,6 +7,10 @@ import {
   exportCSV,
   guessMapping,
   mediaSchema,
+  runtimeLabel,
+  seriesLabel,
+  splitSeries,
+  yearLabel,
 } from "../lib/media.ts";
 const goodreads =
   'Title,Author,My Rating,Exclusive Shelf,My Review,ISBN13\r\n"A book, with commas",An Author,4,read,"First line\nSecond ""quoted"" line",="9781234567890"\r\nUnrated,Someone,0,to-read,,\r\nCurrent,Someone,0,currently-reading,,';
@@ -167,3 +171,79 @@ assert.equal(releaseRoundtrip.items[0].nextReleaseDate, "2027-04-10");
 assert.equal(releaseRoundtrip.items[0].releaseConfidence, "tentative");
 assert.equal(releaseRoundtrip.items[0].releaseSource, "https://example.com/announcement");
 console.log("PASS: release dates, confidence, and source links survive CSV export and import.");
+
+// Series are split out of Goodreads-style book titles, and matching ignores them.
+assert.deepEqual(splitSeries("Words of Radiance (The Stormlight Archive, #2)"), {
+  title: "Words of Radiance",
+  series: "The Stormlight Archive",
+  number: "2",
+});
+assert.deepEqual(splitSeries("The Big Sleep (Philip Marlowe, #1)").series, "Philip Marlowe");
+assert.deepEqual(splitSeries("Tress of the Emerald Sea (The Cosmere #1)").number, "1");
+assert.deepEqual(splitSeries("Hollow Kingdom (Hollow Kingdom, #0.5)").number, "0.5");
+assert.deepEqual(splitSeries("The Expanse (The Expanse, #1-3)").number, "1-3");
+assert.deepEqual(splitSeries("Meditations (Illustrated)"), {
+  title: "Meditations (Illustrated)",
+  series: "",
+  number: "",
+});
+assert.equal(
+  seriesLabel({ kind: "book", series: "The Stormlight Archive", seriesNumber: "2" }),
+  "The Stormlight Archive, Book 2",
+);
+assert.equal(
+  seriesLabel({ kind: "book", series: "The Expanse", seriesNumber: "1-3" }),
+  "The Expanse, Books 1-3",
+);
+assert.equal(seriesLabel({ kind: "book" }), "");
+assert.equal(runtimeLabel(132), "2 h 12 min");
+assert.equal(runtimeLabel(120), "2 h");
+assert.equal(runtimeLabel(45), "45 min");
+assert.equal(yearLabel("-700"), "700 BC");
+assert.equal(yearLabel("1938"), "1938");
+const plain = {
+  ...blankMedia(),
+  title: "Words of Radiance",
+  creator: "Brandon Sanderson",
+  kind: "book",
+};
+assert.ok(
+  sameMedia(plain, { ...plain, id: "x", title: "Words of Radiance (The Stormlight Archive, #2)" }),
+);
+
+const goodreadsYears = importRows(
+  parseCSV(
+    'Book Id,Title,Author,My Rating,Year Published,Original Publication Year,Exclusive Shelf\n1,"Words of Radiance (The Stormlight Archive, #2)",Brandon Sanderson,4,2015,2014,read\n2,Rebecca,Daphne du Maurier,5,2013,1938,read\n',
+  ),
+  { source: "Goodreads", kind: "book", ratingScale: 5 },
+).items;
+assert.equal(goodreadsYears[0].title, "Words of Radiance");
+assert.equal(goodreadsYears[0].series, "The Stormlight Archive");
+assert.equal(goodreadsYears[0].seriesNumber, "2");
+assert.equal(goodreadsYears[0].year, "2014");
+assert.equal(goodreadsYears[1].year, "1938");
+assert.equal(goodreadsYears[1].series, undefined);
+const withSeries = {
+  ...plain,
+  series: "The Stormlight Archive",
+  seriesNumber: "2",
+  summary: "Second book.",
+  runtime: undefined,
+};
+const again = importRows(parseCSV(exportCSV([withSeries])), {
+  source: "Other",
+  kind: "book",
+  ratingScale: 100,
+}).items[0];
+assert.equal(again.series, "The Stormlight Archive");
+assert.equal(again.seriesNumber, "2");
+assert.equal(again.summary, "Second book.");
+const film = importRows(parseCSV("Title,Type,Runtime\nParasite,Movie,132\n"), {
+  source: "Other",
+  kind: "movie",
+  ratingScale: 100,
+}).items[0];
+assert.equal(film.runtime, 132);
+console.log(
+  "PASS: series split from book titles, original publication years preferred, and series, summary and runtime round-trip.",
+);

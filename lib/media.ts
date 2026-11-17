@@ -27,7 +27,16 @@ export const mediaSchema = z
     kind: z.enum(["book", "movie", "tv"]),
     recommendedBy: z.string().max(300).optional(),
     recommendationNote: z.string().max(2000).optional(),
+    // Year of first release or first publication, not of a particular edition.
     year: z.string().max(10).default(""),
+    series: z.string().max(300).optional(),
+    seriesNumber: z.string().max(20).optional(),
+    /** A short description, and where it came from (shown as credit). */
+    summary: z.string().max(5000).optional(),
+    summarySource: z.string().max(100).optional(),
+    summaryUrl: z.string().max(2000).optional(),
+    /** Running time in minutes, for films. */
+    runtime: z.number().int().positive().max(1500).optional(),
     status: z.enum(["planned", "progress", "finished", "paused", "dropped"]),
     score: z.number().int().min(0).max(100).nullable(),
     notes: z.string().max(20000).default(""),
@@ -97,8 +106,38 @@ export function blankMedia(): Media {
     coverUrl: "",
   };
 }
+/**
+ * Split a Goodreads-style title such as "Words of Radiance (The Stormlight
+ * Archive, #2)" into the book's own title and its series. Titles without a
+ * series suffix come back unchanged.
+ */
+export function splitSeries(title: string): { title: string; series: string; number: string } {
+  const match = /^(.+?)\s*\(([^()]+?),?\s+#\s*([\d.]+(?:\s*[-–]\s*[\d.]+)?)\)\s*$/.exec(
+    title.trim(),
+  );
+  if (!match || !match[1].trim()) return { title: title.trim(), series: "", number: "" };
+  return { title: match[1].trim(), series: match[2].trim(), number: match[3].replace(/\s/g, "") };
+}
+/** "The Stormlight Archive, Book 2", for display under a title. */
+export function seriesLabel(item: Pick<Media, "series" | "seriesNumber" | "kind">): string {
+  if (!item.series) return "";
+  if (!item.seriesNumber) return item.series;
+  const unit = item.kind === "book" ? "Book" : "Part";
+  return `${item.series}, ${/[-–]/.test(item.seriesNumber) ? `${unit}s` : unit} ${item.seriesNumber}`;
+}
+/** "2 h 12 min" */
+export function runtimeLabel(minutes?: number): string {
+  if (!minutes) return "";
+  const hours = Math.floor(minutes / 60);
+  return hours ? `${hours} h${minutes % 60 ? ` ${minutes % 60} min` : ""}` : `${minutes} min`;
+}
+/** Years are kept as written; years before the common era are stored as negatives. */
+export function yearLabel(year: string): string {
+  return /^-\d+$/.test(year) ? `${year.slice(1)} BC` : year;
+}
+const bareTitle = (title: string) => normalized(splitSeries(title).title);
 export function sameMedia(a: Media, b: Media) {
-  if (a.kind !== b.kind || normalized(a.title) !== normalized(b.title)) return false;
+  if (a.kind !== b.kind || bareTitle(a.title) !== bareTitle(b.title)) return false;
   if (a.kind === "book")
     return !a.creator || !b.creator || normalized(a.creator) === normalized(b.creator);
   return !a.year || !b.year || a.year === b.year;
@@ -173,6 +212,10 @@ export const importFields = [
   "recommendationNote",
   "priority",
   "coverUrl",
+  "series",
+  "seriesNumber",
+  "summary",
+  "runtime",
 ];
 // Only the original-file columns the app still reads are kept on each title.
 const keptMetadata = new Set(["isbn", "isbn13", "book id", "imdb id", "number of pages"]);
@@ -193,10 +236,16 @@ const aliases: Record<string, string[]> = {
   ],
   creator: ["creator", "author", "director", "creators"],
   kind: ["kind", "type", "media type", "title type"],
-  year: ["year", "release year", "year published", "original publication year"],
+  // Listed best first: Goodreads has both columns, and only the original year
+  // identifies the work rather than the edition.
+  year: ["year", "original publication year", "release year", "year published"],
+  series: ["series"],
+  seriesNumber: ["seriesnumber", "series number", "number in series"],
+  summary: ["summary", "synopsis", "description"],
+  runtime: ["runtime", "running time", "runtime (mins)", "minutes"],
   score: ["score", "my rating", "rating", "rank", "ranking", "your rating", "your score"],
   status: ["status", "exclusive shelf", "shelf", "watch status"],
-  notes: ["notes", "my review", "review", "mini review", "minireview", "description"],
+  notes: ["notes", "my review", "review", "mini review", "minireview"],
   platform: ["platform", "where", "service", "format", "binding"],
   owned: ["owned", "owned copies", "kindle"],
   progress: ["progress"],
@@ -213,7 +262,7 @@ const aliases: Record<string, string[]> = {
   releaseCheckedAt: ["releasecheckedat", "last checked"],
   releaseNote: ["releasenote", "release notes"],
   pageCount: ["pagecount", "page count", "number of pages", "pages"],
-  isbn: ["isbn13", "isbn"],
+  isbn: ["isbn", "isbn13"],
   sourceRating: ["sourcerating", "original rating"],
   coverUrl: ["coverurl", "cover url", "cover", "poster", "poster url", "artwork"],
 };
@@ -232,9 +281,17 @@ function detectKind(typeText: string, link: string, fallback: Media["kind"]): Me
 }
 export function guessMapping(headers: string[]) {
   const m: Record<string, string> = {};
+  const used = new Set<string>();
   for (const [field, names] of Object.entries(aliases)) {
-    const h = headers.find((h) => names.includes(h.toLowerCase().trim()));
-    if (h) m[field] = h;
+    // Try each name in priority order, so the preferred column wins when a file has several.
+    for (const name of names) {
+      const h = headers.find((h) => h.toLowerCase().trim() === name && !used.has(h));
+      if (h) {
+        m[field] = h;
+        used.add(h);
+        break;
+      }
+    }
   }
   return m;
 }
@@ -256,8 +313,8 @@ export function importRows(
       // spreadsheet would otherwise run as a formula.
       return /^'[=+\-@]/.test(value) ? value.slice(1) : value;
     };
-    const title = get("title");
-    if (!title) {
+    const rawTitle = get("title");
+    if (!rawTitle) {
       errors.push(`Row ${i + 2}: no title`);
       return;
     }
@@ -282,6 +339,16 @@ export function importRows(
         score = Math.round((n / opts.ratingScale) * 100);
     }
     const kind = detectKind(get("kind"), get("sourceUrl"), opts.kind);
+    const split = kind === "book" && !get("series") ? splitSeries(rawTitle) : null;
+    const title = split ? split.title : rawTitle;
+    const runtime = Number(get("runtime"));
+    const seriesFields = {
+      title,
+      series: split?.series || get("series") || undefined,
+      seriesNumber: split?.number || get("seriesNumber") || undefined,
+      summary: get("summary") || undefined,
+      runtime: Number.isInteger(runtime) && runtime > 0 ? runtime : undefined,
+    };
     const s = get("status").toLowerCase();
     let status: Media["status"] = "planned";
     if (/currently|progress|reading|watching/.test(s) && !s.includes("to-")) status = "progress";
@@ -317,7 +384,7 @@ export function importRows(
       recommendedBy: get("recommendedBy"),
       recommendationNote: get("recommendationNote"),
       priority: /^(true|yes|1|high)$/i.test(get("priority")),
-      title,
+      ...seriesFields,
       kind,
       pageCount: get("pageCount") ? Number(get("pageCount")) : undefined,
       creator: get("creator"),
@@ -373,6 +440,10 @@ export function exportCSV(items: Media[]) {
     "recommendationNote",
     "priority",
     "coverUrl",
+    "series",
+    "seriesNumber",
+    "summary",
+    "runtime",
   ] as const;
   const quote = (v: unknown) => {
     let s = String(v ?? "");

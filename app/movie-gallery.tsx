@@ -17,6 +17,7 @@ import { movieRows, moviePosterFor } from "../lib/movie-gallery.mjs";
 import "./movie-gallery.css";
 import MovieDetail from "./movie-detail";
 import { ConnectButton, StorageLabel } from "./hub-context";
+import GeneratedCover from "./generated-cover";
 
 type Props = {
   items: Media[];
@@ -41,11 +42,7 @@ function PosterImage({ item }: { item: Media }) {
       {src && failed !== src ? (
         <img src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(src)} />
       ) : (
-        <span className="mg-fallback">
-          <Clapperboard size={28} strokeWidth={1} />
-          <strong>{item.title}</strong>
-          <small>{item.year || "Movie"}</small>
-        </span>
+        <GeneratedCover item={item} />
       )}
     </>
   );

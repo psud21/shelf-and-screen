@@ -24,6 +24,7 @@ import EpisodeTracker from "./episode-tracker";
 import "./movie-gallery.css";
 import "./tv-gallery.css";
 import { ConnectButton, StorageLabel } from "./hub-context";
+import GeneratedCover from "./generated-cover";
 
 type Props = {
   items: Media[];
@@ -59,11 +60,9 @@ function PosterImage({ group }: { group: TVGroup }) {
   return src && failed !== src ? (
     <img src={src} alt="" loading="lazy" decoding="async" onError={() => setFailed(src)} />
   ) : (
-    <span className="mg-fallback">
-      <Tv size={28} strokeWidth={1} />
-      <strong>{group.title}</strong>
-      <small>{tvGroupYear(group) || "TV show"}</small>
-    </span>
+    <GeneratedCover
+      item={{ title: group.title, creator: "", kind: "tv", year: tvGroupYear(group) }}
+    />
   );
 }
 function dateLabel(date?: string) {

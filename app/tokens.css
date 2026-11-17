@@ -1,0 +1,97 @@
+/*
+ * Design tokens: the only colours, type sizes, radii and shadows the app uses.
+ * Screens refer to these by name; change a value here and every screen follows.
+ */
+@import "@fontsource-variable/dm-sans/opsz.css";
+@import "@fontsource-variable/newsreader/opsz.css";
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces, darkest to lightest */
+  --bg: #0f1116;
+  --surface-1: #15181f;
+  --surface-2: #1b1f28;
+  --surface-3: #232833;
+  --surface-4: #2d3340;
+
+  /* Hairlines */
+  --line: #262b35;
+  --line-strong: #353b48;
+  --line-bold: #4a5161;
+
+  /* Text, strongest to faintest (every step stays readable on --bg) */
+  --text: #eceae4;
+  --text-2: #b9bdc7;
+  --text-3: #8d929e;
+  --text-4: #6c727e;
+
+  /* Accent */
+  --gold: #d9b66d;
+  --gold-hi: #ebca82;
+  --gold-pale: #f2e4bd;
+  --gold-lo: #9c8150;
+  --gold-deep: #3a2f1c;
+  --gold-line: #5a4a2c;
+  --gold-tint-1: #d9b66d14;
+  --gold-tint-2: #d9b66d33;
+  --gold-tint-3: #d9b66d73;
+  --on-gold: #17140d;
+
+  /* Status */
+  --green: #a9c6ad;
+  --green-deep: #1c2a22;
+  --blue: #a9c0da;
+  --blue-deep: #1b2433;
+  --red: #ee9f90;
+  --red-deep: #2e1e1e;
+  --red-line: #6e4a45;
+
+  /* Translucent layers over any surface */
+  --tint-1: #ffffff06;
+  --tint-2: #ffffff0c;
+  --tint-3: #ffffff16;
+  --shade-1: #00000033;
+  --shade-2: #00000059;
+  --shade-3: #0000008c;
+
+  /* Cloth colours for covers drawn when no artwork exists */
+  --cloth-1: #5b2a2a;
+  --cloth-2: #24402f;
+  --cloth-3: #1f2f4a;
+  --cloth-4: #4a3a22;
+  --cloth-5: #3a2d47;
+  --cloth-6: #2c3a40;
+
+  /* Type */
+  --font-ui: "DM Sans Variable", "DM Sans", system-ui, sans-serif;
+  --font-display: "Newsreader Variable", "Newsreader", Georgia, serif;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 28px;
+  --text-3xl: 40px;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-caps: 0.14em;
+
+  /* Shape and depth */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+  --shadow-1: 0 1px 2px #00000040, 0 4px 12px #00000033;
+  --shadow-2: 0 2px 6px #00000040, 0 24px 64px #0000008c;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --fast: 140ms;
+  --slow: 320ms;
+}

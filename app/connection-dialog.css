@@ -3,12 +3,12 @@
   align-items: center;
   gap: 9px;
   margin: 0;
-  font-size: 13px;
-  color: var(--muted);
+  font-size: var(--text-sm);
+  color: var(--text-2);
 }
 .connection-current strong {
-  color: var(--ink);
-  font-weight: 600;
+  color: var(--text);
+  font-weight: var(--weight-semibold);
   overflow-wrap: anywhere;
 }
 .connection-body .source-help p + p {
@@ -27,20 +27,20 @@
   align-items: center;
   gap: 7px;
   padding: 8px 11px;
-  border: 1px solid #353944;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #abb1bf;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--text-2);
   white-space: nowrap;
 }
 .bs-storage:hover {
-  color: #e8e7e3;
-  border-color: #4a4e5c;
+  color: var(--text);
+  border-color: var(--line-bold);
 }
 .bs-storage.needs-setup {
-  color: #f3e7bc;
-  border-color: #d9b66d;
+  color: var(--gold-pale);
+  border-color: var(--gold);
 }
 @media (max-width: 700px) {
   .bs-storage {

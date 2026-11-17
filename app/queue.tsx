@@ -15,7 +15,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { blankMedia, typeNames, type Media } from "../lib/media";
+import { blankMedia, seriesLabel, typeNames, type Media } from "../lib/media";
 import { prepareRecommendation, queueItems } from "../lib/queue";
 import MediaNavigation from "./media-navigation";
 import MediaThumbnail from "./media-thumbnail";
@@ -381,16 +381,18 @@ export default function Queue(props: Props) {
                       >
                         {item.title}
                       </button>
-                      {item.creator && <p className="queue-creator">{item.creator}</p>}
-                      {item.recommendedBy ? (
+                      {(item.creator || item.series) && (
+                        <p className="queue-creator">
+                          {[item.creator, seriesLabel(item)].filter(Boolean).join(" · ")}
+                        </p>
+                      )}
+                      {item.recommendedBy && (
                         <div className="queue-recommender">
                           <UserRound size={12} />
                           <span>
                             Recommended by <strong>{item.recommendedBy}</strong>
                           </span>
                         </div>
-                      ) : (
-                        <span className="queue-on-list">On your list</span>
                       )}
                       {item.recommendationNote && (
                         <p className="queue-reason">{item.recommendationNote}</p>

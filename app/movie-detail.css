@@ -1,12 +1,12 @@
 .movie-detail-dialog {
-  background: #11151d;
+  background: var(--surface-1);
 }
 .film-hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   border-radius: 17px 17px 0 0;
-  background: #161a23;
+  background: var(--surface-1);
 }
 .film-backdrop {
   position: absolute;
@@ -24,7 +24,8 @@
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(90deg, #11151d26, #11151d99), linear-gradient(0deg, #11151d 0%, #11151d30 85%);
+    linear-gradient(90deg, var(--shade-1), var(--shade-3)),
+    linear-gradient(0deg, var(--surface-1) 0%, var(--shade-1) 85%);
 }
 .film-hero-content {
   display: grid;
@@ -36,11 +37,11 @@
 }
 .film-poster {
   aspect-ratio: 2/3;
-  border: 1px solid #ffffff42;
-  border-radius: 5px;
-  box-shadow: 0 12px 32px #0008;
+  border: 1px solid var(--tint-3);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-2);
   overflow: hidden;
-  background: #242935;
+  background: var(--surface-3);
 }
 .film-poster img {
   width: 100%;
@@ -49,7 +50,7 @@
   display: block;
 }
 .film-title h2 {
-  font-size: 34px;
+  font-size: var(--text-3xl);
   margin-top: 13px;
 }
 .film-title > .story-meta {
@@ -70,19 +71,19 @@
   margin-top: 20px;
 }
 .film-platform {
-  font-size: 12px !important;
+  font-size: var(--text-xs) !important;
 }
 .film-body {
   padding: 18px 38px 25px;
 }
 .film-progress {
-  font-size: 12px;
-  color: #aeb4c2;
+  font-size: var(--text-xs);
+  color: var(--text-2);
   margin-top: 15px;
 }
 .film-save-message {
-  color: #d3c493;
-  font-size: 12px;
+  color: var(--gold-hi);
+  font-size: var(--text-xs);
   min-height: 19px;
   line-height: 1.6;
   margin-top: 11px;
@@ -93,12 +94,12 @@
   justify-content: space-between;
   gap: 15px;
   padding-top: 20px;
-  border-top: 1px solid #353c48;
+  border-top: 1px solid var(--line-strong);
   margin-top: 9px;
 }
 .film-all-details {
-  color: #acb3c3;
-  font-size: 12px;
+  color: var(--text-2);
+  font-size: var(--text-xs);
   padding: 4px 0;
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -109,24 +110,24 @@
   gap: 12px;
 }
 .film-footer > div > span {
-  font-size: 9px;
-  color: #8a94a6;
-  letter-spacing: 1.4px;
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  letter-spacing: var(--tracking-caps);
 }
 .film-step {
   width: 34px;
   height: 34px;
-  border: 1px solid #414958;
+  border: 1px solid var(--line-bold);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #dce0e7;
+  color: var(--text);
 }
 .film-step:disabled {
   opacity: 0.25;
 }
 .film-step:hover:enabled {
-  border-color: #d9b66d;
+  border-color: var(--gold);
 }
 @keyframes film-arrive {
   from {
@@ -146,15 +147,15 @@
     align-items: start;
   }
   .film-title .story-kicker {
-    font-size: 8px;
-    letter-spacing: 1.3px;
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-caps);
   }
   .film-title h2 {
-    font-size: 24px;
+    font-size: var(--text-xl);
     margin-top: 10px;
   }
   .film-title > .story-meta {
-    font-size: 11px;
+    font-size: var(--text-xs);
     margin-top: 10px;
   }
   .film-rating-row {
@@ -170,7 +171,7 @@
     padding-top: 10px;
   }
   .film-title .film-actions .story-action {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   .film-body {
     padding: 17px 22px 23px;

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { type Media } from "../lib/media";
-import { spineAppearance, spineTitle } from "../lib/bookshelf.mjs";
+import { spineAppearance } from "../lib/bookshelf.mjs";
 import { bookCoverCandidates } from "../lib/book-covers.mjs";
+import GeneratedCover from "./generated-cover";
 
 export default function BookCover({ book }: { book: Media }) {
   const [failed, setFailed] = useState<string[]>([]);
@@ -26,7 +27,7 @@ export default function BookCover({ book }: { book: Media }) {
           }}
         />
       ) : (
-        <span>{spineTitle(book.title)}</span>
+        <GeneratedCover item={book} />
       )}
     </div>
   );

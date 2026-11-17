@@ -8,15 +8,15 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  border-top: 1px solid #353c48;
+  border-top: 1px solid var(--line-strong);
   padding-top: 20px;
   margin-top: 20px;
-  color: #acb3c3;
-  font-size: 12px;
+  color: var(--text-2);
+  font-size: var(--text-xs);
   line-height: 1.7;
 }
 .tvg-release > svg {
-  color: #d9b66d;
+  color: var(--gold);
   margin-top: 3px;
   flex-shrink: 0;
 }
@@ -25,8 +25,8 @@
   min-width: 0;
 }
 .tvg-release h3 {
-  font-size: 15px;
-  color: #eee;
+  font-size: var(--text-md);
+  color: var(--text);
   margin: 7px 0;
 }
 .tvg-release p {
@@ -35,7 +35,7 @@
   margin-top: 5px;
 }
 .tvg-release > .story-action {
-  font-size: 11px;
+  font-size: var(--text-xs);
   margin-top: 0;
   flex-shrink: 0;
 }
@@ -44,7 +44,7 @@
   align-items: center;
   gap: 15px;
   flex-wrap: wrap;
-  font-size: 10px;
+  font-size: var(--text-xs);
   margin-top: 8px;
 }
 .tvg-provenance a {
@@ -55,7 +55,7 @@
   text-underline-offset: 3px;
 }
 .tvg-history {
-  border-top: 1px solid #353c48;
+  border-top: 1px solid var(--line-strong);
   padding-top: 14px;
   margin-top: 20px;
 }
@@ -66,17 +66,17 @@
   cursor: pointer;
   list-style: none;
   min-height: 34px;
-  font-size: 12px;
-  color: #aeb4c2;
+  font-size: var(--text-xs);
+  color: var(--text-2);
 }
 .tvg-history summary::-webkit-details-marker {
   display: none;
 }
 .tvg-history summary > span {
-  font-size: 9px;
-  border: 1px solid #3b414e;
+  font-size: var(--text-xs);
+  border: 1px solid var(--line-strong);
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
 }
 .tvg-history summary > svg {
   margin-left: auto;
@@ -85,8 +85,8 @@
   transform: rotate(180deg);
 }
 .tvg-history > p {
-  font-size: 11px;
-  color: #aeb4c2;
+  font-size: var(--text-xs);
+  color: var(--text-2);
   line-height: 1.7;
   margin: 8px 0;
 }
@@ -100,25 +100,25 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 1px solid #3b414e;
-  border-radius: 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
   padding: 5px 8px;
-  color: #aeb4c2;
+  color: var(--text-2);
 }
 .tvg-history-entry button {
-  color: #ddd;
-  font-size: 11px;
+  color: var(--text);
+  font-size: var(--text-xs);
   min-height: 34px;
   padding: 4px 0;
 }
 .tvg-history-entry button[aria-pressed="true"] {
-  color: #d9b66d;
+  color: var(--gold);
 }
 .tvg-history-entry > span {
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 .tvg-history-entry small {
-  font-size: 9px;
+  font-size: var(--text-xs);
   margin-left: 2px;
 }
 .tvg-history-entry .tvg-history-edit {
@@ -130,12 +130,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #aeb4c2;
-  font-size: 11px;
+  color: var(--text-2);
+  font-size: var(--text-xs);
   padding: 15px 0 0;
 }
 .tvg-release-add:hover {
-  color: #d9b66d;
+  color: var(--gold);
 }
 .tvg-season-notes {
   white-space: pre-wrap;
