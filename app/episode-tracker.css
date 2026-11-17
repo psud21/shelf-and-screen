@@ -155,12 +155,6 @@
   flex-wrap: wrap;
   margin-top: 16px;
 }
-.episode-rate {
-  color: #d9b66d;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  padding: 2px;
-}
 .episode-pages {
   display: flex;
   align-items: center;

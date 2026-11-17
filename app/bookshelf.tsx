@@ -14,7 +14,6 @@ import {
   ArrowUp,
   BookOpen,
   CalendarDays,
-  Check,
   ChevronLeft,
   ChevronRight,
   Download,

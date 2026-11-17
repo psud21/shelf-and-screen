@@ -53,6 +53,30 @@ Images load directly from the sites that host them (Open Library, TMDB, or
 wherever a link you paste points), so those sites can see which images your
 browser requests.
 
+## Service exports
+
+Export → Goodreads or Criticker downloads a CSV to upload on that service's import
+page. It is a one-way file transfer, not account sync, and it never changes the
+library. Notes are only included when "include my notes" is ticked, because reviews
+may be public on those services. Rules live in
+[`lib/service-exports.ts`](lib/service-exports.ts) and are checked by
+`scripts/check-service-exports.mjs`.
+
+- **Goodreads:** the native library-export columns (`Book Id, Title, Author, ISBN,
+ISBN13, My Rating, Date Read, Date Added, Bookshelves, Exclusive Shelf`, plus
+  `My Review` with notes). Scores round to the nearest quarter star, from 1 to 5;
+  unrated exports as 0. Up next / In progress / Finished map to to-read /
+  currently-reading / read; On hold adds an `on-hold` shelf and Stopped a
+  `did-not-finish` shelf. Goodreads needs an ISBN, so books without one are listed
+  for attention and left out. Files hold at most 499 books, as Goodreads recommends
+  fewer than 500. Importing can replace ratings already on Goodreads.
+- **Criticker:** a header row, then IMDb ID, the exact 0–100 rating, an optional
+  `YYYY-MM-DD` watched date and an optional minireview. Season IDs such as
+  `tt8712204_s2` are kept. Unrated titles are left out, and titles with a missing or
+  duplicate IMDb ID are listed for attention. Files stay within Criticker's
+  5,000-line limit, counting multi-line reviews. Criticker skips ratings it already
+  has, so changes to existing ratings must be made there.
+
 ## Development
 
 Requires Node.js 22.18 or newer.
